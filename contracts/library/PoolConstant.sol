@@ -4,10 +4,10 @@ pragma solidity ^0.6.12;
 library PoolConstant {
 
     enum PoolTypes {
-        AMVStake, // no perf fee
-        AMVFlip_deprecated, // deprecated
-        CakeStake, FlipToFlip, FlipToCake,
-        AMV, // no perf fee
+        AMVStake,
+        CakeStake, 
+        FlipToFlip, 
+        FlipToBNB,
         AMVBNB,
         Venus
     }
@@ -25,6 +25,7 @@ library PoolConstant {
         uint depositedAt;
         uint feeDuration;
         uint feePercentage;
+        uint portfolio;
     }
 
     struct PoolInfoETH {

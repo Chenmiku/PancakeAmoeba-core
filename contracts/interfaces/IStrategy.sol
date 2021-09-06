@@ -2,14 +2,13 @@
 pragma solidity ^0.6.12;
 pragma experimental ABIEncoderV2;
 
-import "./PoolConstant.sol";
+import "../library/PoolConstant.sol";
 import "./IVaultController.sol";
 
 interface IStrategy is IVaultController {
     function deposit(uint _amount) external;
     function depositAll() external;
     function withdraw(uint256 _amount) external;    // AMV STAKING POOL ONLY
-    function withdrawGetRewardToken(uint256 _amount, address receiver, address rewardToken) external;    
     function withdrawAll() external;
     function getReward() external;                  // AMV STAKING POOL ONLY
     function harvest() external;

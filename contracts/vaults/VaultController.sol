@@ -2,16 +2,16 @@
 pragma solidity ^0.6.12;
 pragma experimental ABIEncoderV2;
 
-import "./SafeBEP20.sol";
-import "./BEP20.sol";
+import "../library/SafeBEP20.sol";
+import "../library/BEP20.sol";
 
-import "./IPancakeRouter02.sol";
-import "./IPancakePair.sol";
-import "./IStrategy.sol";
-import "./IMasterChef.sol";
-import "./IAMVMinterV2.sol";
-import "./PausableUpgradeable.sol";
-import "./Whitelist.sol";
+import "../interfaces/IPancakeRouter02.sol";
+import "../interfaces/IPancakePair.sol";
+import "../interfaces/IStrategy.sol";
+import "../interfaces/IMasterChef.sol";
+import "../interfaces/IAMVMinterV2.sol";
+import "../library/PausableUpgradeable.sol";
+import "../library/Whitelist.sol";
 
 abstract contract VaultController is IVaultController, PausableUpgradeable, Whitelist {
     using SafeBEP20 for IBEP20;

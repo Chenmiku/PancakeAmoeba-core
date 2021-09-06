@@ -2,14 +2,14 @@
 pragma solidity ^0.6.12;
 pragma experimental ABIEncoderV2;
 
-import "./SafeBEP20.sol";
-import "./Math.sol";
+import "../library/SafeBEP20.sol";
+import "../library/Math.sol";
 
-import "./IStrategy.sol";
-import "./IMasterChef.sol";
-import "./IAMVMinterV2.sol";
+import "../interfaces/IStrategy.sol";
+import "../interfaces/IMasterChef.sol";
+import "../interfaces/IAMVMinterV2.sol";
 import "./VaultController.sol";
-import {PoolConstant} from "./PoolConstant.sol";
+import {PoolConstant} from "../library/PoolConstant.sol";
 
 contract VaultCakeToCake is VaultController, IStrategy {
     using SafeBEP20 for IBEP20;
@@ -149,26 +149,6 @@ contract VaultCakeToCake is VaultController, IStrategy {
 
         _harvest(cakeHarvested);
     }
-
-    function withdrawGetRewardToken(uint shares, address receiver, address rewardToken) external override onlyWhitelisted {
-        uint amount = balance().mul(shares).div(totalShares);
-        totalShares = totalShares.sub(shares);
-        _shares[msg.sender] = _shares[msg.sender].sub(shares);
-
-        uint cakeHarvested = _withdrawStakingToken(amount);
-        
-        if (amount > 0) {
-            if (rewardToken == address(CAKE)) {
-                CAKE.safeTransfer(msg.sender, amount);
-            } else {
-                _swapTokenToToken(address(CAKE), amount, rewardToken, receiver);
-            }
-        }
-        
-        emit Withdrawn(msg.sender, amount, 0);
-
-        _harvest(cakeHarvested);
-    }
     
     // @dev underlying only + withdrawal fee + no perf fee
     function withdrawUnderlying(uint _amount) external {
@@ -214,36 +194,6 @@ contract VaultCakeToCake is VaultController, IStrategy {
     }
 
     /* ========== PRIVATE FUNCTIONS ========== */
-    
-    function _approveTokenIfNeeded(address token) private {
-        if (IBEP20(token).allowance(address(this), address(ROUTER)) == 0) {
-            IBEP20(token).safeApprove(address(ROUTER), uint(~0));
-        }
-    }
-    
-    function _swapTokenToToken(address _from, uint amount, address _to, address _receiver) private returns (uint) {
-        
-        require(amount > 0, "VaultCakeToCake: amount must be greater than zero");
-        _approveTokenIfNeeded(_from);
-        
-        address[] memory path;
-        
-        if (_from == WBNB || _to == WBNB) {
-            // [WBNB, AMV] or [AMV, WBNB]
-            path = new address[](2);
-            path[0] = _from;
-            path[1] = _to;
-        } else {
-            // [USDT, AMV] or [AMV, USDT]
-            path = new address[](3);
-            path[0] = _from;
-            path[1] = WBNB;
-            path[2] = _to;
-        }
-       
-        uint[] memory amounts = ROUTER.swapExactTokensForTokens(amount, 0, path, _receiver, block.timestamp);
-        return amounts[amounts.length - 1];
-    }
 
     function _depositStakingToken(uint amount) private returns(uint cakeHarvested) {
         uint before = CAKE.balanceOf(address(this));

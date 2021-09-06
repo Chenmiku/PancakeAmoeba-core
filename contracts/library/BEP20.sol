@@ -4,7 +4,7 @@ pragma solidity >=0.4.0;
 
 import './Ownable.sol';
 import './Context.sol';
-import './IBEP20.sol';
+import '../interfaces/IBEP20.sol';
 import './SafeMath.sol';
 import './Address.sol';
 
